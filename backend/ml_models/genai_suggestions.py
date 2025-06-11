@@ -5,7 +5,7 @@ import requests
 from pathlib import Path
 from dotenv import load_dotenv
 from mistralai.client import MistralClient
-from mistralai.models.chat_completion import ChatMessage
+from mistralai.models.chat import ChatMessage
 
 # ✅ Load environment variables from .env
 load_dotenv()
