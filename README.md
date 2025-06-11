@@ -1,4 +1,5 @@
 # 🔐 Password Strength Analyzer
+https://passwordstrengthanalyzer.onrender.com
 
 An intelligent tool for analyzing the strength of passwords using traditional and AI-powered methods. It evaluates password robustness, detects weaknesses, and suggests stronger alternatives using machine learning and GenAI (Mistral API).
 
