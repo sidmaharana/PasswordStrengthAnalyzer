@@ -20,6 +20,4 @@ Thumbs.db
 *.h5
 *.log
 
-# Dataset (like RockYou)
-rockyou.txt
-datasets/
+
