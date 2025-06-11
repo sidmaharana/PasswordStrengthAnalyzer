@@ -1,0 +1,25 @@
+# Python
+*.py[cod]
+__pycache__/
+*.pyo
+*.pyd
+
+# Virtual environment
+venv/
+
+# Environment variables
+.env
+**/.env
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Model files
+*.joblib
+*.h5
+*.log
+
+# Dataset (like RockYou)
+rockyou.txt
+datasets/

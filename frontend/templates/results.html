@@ -1,0 +1,76 @@
+<!-- frontend/templates/results.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Password Analysis Results</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Password Strength Analysis</h1>
+        
+        <div class="result-section">
+            <h2>Basic Metrics</h2>
+            <table>
+                <tr>
+                    <th>Metric</th>
+                    <th>Value</th>
+                </tr>
+                <tr>
+                    <td>Length</td>
+                    <td>{{ result.length }}</td>
+                </tr>
+                <tr>
+                    <td>Entropy</td>
+                    <td>{{ result.entropy }}</td>
+                </tr>
+                <tr>
+                    <td>Time to Crack</td>
+                    <td>{{ result.time_to_crack }}</td>
+                </tr>
+            </table>
+        </div>
+        
+        <div class="result-section">
+            <h2>Pattern Analysis</h2>
+            <ul>
+                {% for pattern, detected in result.patterns.items() %}
+                <li>
+                    <strong>{{ pattern|replace('_', ' ')|title }}:</strong> 
+                    {{ 'Detected' if detected else 'Not Detected' }}
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        
+        <div class="result-section">
+            <h2>Recommendations</h2>
+            <ul>
+                {% for recommendation in result.recommendations %}
+                <li>{{ recommendation }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        
+        <div class="result-section">
+            <h2>Suggested Improved Password</h2>
+            <input type="text" value="{{ result.suggested_password }}" readonly>
+            <button onclick="copyPassword()">Copy</button>
+        </div>
+        
+        <div class="actions">
+            <a href="/" class="btn">Analyze Another Password</a>
+        </div>
+    </div>
+
+    <script>
+        function copyPassword() {
+            const passwordInput = document.querySelector('input[readonly]');
+            passwordInput.select();
+            document.execCommand('copy');
+            alert('Password copied to clipboard!');
+        }
+    </script>
+</body>
+</html> 

@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Password Strength Analyzer | Security Dashboard</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;700&family=Orbitron:wght@500;700&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6e48aa;
+            --secondary: #9d50bb;
+            --dark: #1a1a2e;
+            --darker: #16213e;
+            --light: #e6e6e6;
+            --danger: #ff4d4d;
+            --success: #4dff88;
+            --warning: #ffcc4d;
+        }
+        
+        body {
+            font-family: 'Roboto Mono', monospace;
+            background: linear-gradient(135deg, var(--darker), var(--dark));
+            color: var(--light);
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            line-height: 1.6;
+        }
+        
+        .container {
+            width: 90%;
+            max-width: 800px;
+            background: rgba(26, 26, 46, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 2.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(110, 72, 170, 0.1) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+            z-index: -1;
+        }
+        
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        h1, h2 {
+            font-family: 'Orbitron', sans-serif;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            color: var(--light);
+            text-shadow: 0 0 10px rgba(157, 80, 187, 0.7);
+            letter-spacing: 1px;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+        
+        h1::after {
+            content: '';
+            display: block;
+            width: 100px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            margin: 0.5rem auto 0;
+            border-radius: 3px;
+        }
+        
+        h2 {
+            font-size: 1.8rem;
+            margin-top: 2rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        #passwordInput {
+            width: 100%;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            border: 2px solid rgba(110, 72, 170, 0.5);
+            border-radius: 8px;
+            background: rgba(26, 26, 46, 0.7);
+            color: var(--light);
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            font-family: 'Roboto Mono', monospace;
+        }
+        
+        #passwordInput:focus {
+            outline: none;
+            border-color: var(--secondary);
+            box-shadow: 0 0 15px rgba(157, 80, 187, 0.5);
+        }
+        
+        button {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-family: 'Orbitron', sans-serif;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 5px 15px rgba(110, 72, 170, 0.4);
+        }
+        
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(110, 72, 170, 0.6);
+        }
+        
+        button:active {
+            transform: translateY(1px);
+        }
+        
+        #results {
+            background: rgba(22, 33, 62, 0.6);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+            border-left: 4px solid var(--secondary);
+            transition: all 0.5s ease;
+        }
+        
+        #results.hidden {
+            opacity: 0;
+            height: 0;
+            padding: 0;
+            margin: 0;
+            overflow: hidden;
+            border: none;
+        }
+        
+        .result-item {
+            margin-bottom: 1.2rem;
+            padding-bottom: 1.2rem;
+            border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+        }
+        
+        .result-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        
+        strong {
+            color: var(--secondary);
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+        
+        #timeToCrack, #strengthFeatures, #suggestedPassword, #breachStatus {
+            font-family: 'Roboto Mono', monospace;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            display: inline-block;
+            word-break: break-word;
+        }
+        
+        #suggestedPassword {
+            color: var(--success);
+            font-weight: bold;
+        }
+        
+        .security-meter {
+            height: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            margin: 1rem 0;
+            overflow: hidden;
+        }
+        
+        .security-level {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--danger), var(--warning), var(--success));
+            border-radius: 5px;
+            transition: width 0.5s ease;
+        }
+        
+        /* New Breach Strength Indicator Styles */
+        .breach-strength-container {
+            margin: 1.5rem 0;
+            padding: 1rem;
+            background: rgba(22, 33, 62, 0.6);
+            border-radius: 10px;
+            border-left: 4px solid var(--primary);
+        }
+        
+        .breach-strength-title {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+        
+        .breach-strength-title span {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--light);
+            font-size: 1rem;
+        }
+        
+        .breach-count {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+        
+        .breach-strength-visual {
+            height: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+            margin: 0.5rem 0;
+        }
+        
+        .breach-strength-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--success), var(--warning), var(--danger));
+            border-radius: 10px;
+            transition: width 0.5s ease;
+            position: relative;
+        }
+        
+        .breach-strength-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 0.5rem;
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .breach-strength-marker {
+            position: absolute;
+            top: -5px;
+            width: 2px;
+            height: 30px;
+            background: rgba(255, 255, 255, 0.5);
+            transform: translateX(-50%);
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 2rem;
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.5);
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 1.5rem;
+                width: 95%;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            h2 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>
+            <i class="fas fa-shield-alt"></i> AI Password Strength Analyzer
+        </h1>
+        
+        <input type="password" id="passwordInput" placeholder="Enter your password to analyze..." autocomplete="off">
+        <button onclick="analyzePassword()">
+            <i class="fas fa-search"></i> Analyze Password Security
+        </button>
+        
+        <div class="security-meter">
+            <div class="security-level" id="securityMeter"></div>
+        </div>
+        
+        <div id="results" class="hidden">
+            <h2><i class="fas fa-chart-bar"></i> Security Analysis Report</h2>
+            
+            <div class="result-item">
+                <strong><i class="fas fa-clock"></i> Estimated Time to Crack:</strong>
+                <span id="timeToCrack"></span>
+            </div>
+            
+            <div class="result-item">
+                <strong><i class="fas fa-feather-alt"></i> Password Strength Features:</strong>
+                <span id="strengthFeatures"></span>
+            </div>
+            
+            <div class="result-item">
+                <strong><i class="fas fa-lightbulb"></i> Suggested Stronger Password:</strong>
+                <span id="suggestedPassword"></span>
+            </div>
+            
+            <div class="breach-strength-container">
+                <div class="breach-strength-title">
+                    <span><i class="fas fa-shield-virus"></i> Breach Exposure Strength</span>
+                    <span class="breach-count" id="breachCount">0 breaches</span>
+                </div>
+                <div class="breach-strength-visual">
+                    <div class="breach-strength-bar" id="breachStrengthBar">
+                        <div class="breach-strength-marker" id="breachMarker"></div>
+                    </div>
+                </div>
+                <div class="breach-strength-labels">
+                    <span>Safe (0)</span>
+                    <span>Low (1-10)</span>
+                    <span>Risk (11-100)</span>
+                    <span>High Risk (101-1000)</span>
+                    <span>Critical (1000+)</span>
+                </div>
+            </div>
+            
+            <div class="result-item">
+                <strong><i class="fas fa-database"></i> Breach Status:</strong>
+                <span id="breachStatus"></span>
+            </div>
+            
+        
+        <div class="footer">
+            <p>Powered by Advanced AI Security Algorithms | <i class="fas fa-lock"></i> Your data is processed locally</p>
+        </div>
+    </div>
+
+    <script src="/static/js/main.js"></script>
+</body>
+</html>
