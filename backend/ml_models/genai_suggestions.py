@@ -41,11 +41,9 @@ class PasswordSuggestionGenerator:
         if not self.api_key:
             raise ValueError("Mistral AI API key is missing. Set MISTRAL_API_KEY in .env file or system environment variables.")
 
-        # ✅ Use system SSL (Render-compatible)
-        transport = HTTPTransport(retries=3, trust_env=True)
 
         self.model = "mistral-small"
-        self.client = MistralClient(api_key=self.api_key, transport=transport)
+        self.client = MistralClient(api_key=self.api_key)
 
         self.common_passwords = load_common_passwords()
 
