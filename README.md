@@ -98,4 +98,4 @@ Pull requests are welcome! For major changes, please open an issue first to disc
 
 ## 📫 Contact
 
-Made with ❤️ by Sidharth Maharana
+Made with ❤️ by Sidharth Maharana, Harshal Kale & Shiv Tangloo
