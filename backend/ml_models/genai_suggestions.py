@@ -6,6 +6,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 from mistralai.client import MistralClient
 from mistralai.models.chat_completion import ChatMessage
+from httpx import HTTPTransport
 
 # ✅ Load environment variables from .env
 load_dotenv()
@@ -40,13 +41,12 @@ class PasswordSuggestionGenerator:
         if not self.api_key:
             raise ValueError("Mistral AI API key is missing. Set MISTRAL_API_KEY in .env file or system environment variables.")
 
-        # ✅ Optional SSL cert (only for local dev)
-        ssl_cert_path = os.getenv("SSL_CERT_FILE")
-        if ssl_cert_path:
-            os.environ["SSL_CERT_FILE"] = ssl_cert_path
+        # ✅ Use system SSL (Render-compatible)
+        transport = HTTPTransport(retries=3, trust_env=True)
 
         self.model = "mistral-small"
-        self.client = MistralClient(api_key=self.api_key)
+        self.client = MistralClient(api_key=self.api_key, transport=transport)
+
         self.common_passwords = load_common_passwords()
 
     def generate_improved_password(self, original_password):
