@@ -5,7 +5,7 @@ import requests
 from pathlib import Path
 from dotenv import load_dotenv
 from mistralai.client import MistralClient
-from mistralai.models.chat_completion import ChatMessage
+from mistralai.models.chat_completion import ChatCompletionMessage as ChatMessage
 
 # ✅ Load environment variables from .env
 load_dotenv()
@@ -45,7 +45,7 @@ class PasswordSuggestionGenerator:
         if ssl_cert_path:
             os.environ["SSL_CERT_FILE"] = ssl_cert_path
 
-        self.model = "mistral-large-latest"
+        self.model = "mistral-medium"
         self.client = MistralClient(api_key=self.api_key)
         self.common_passwords = load_common_passwords()
 
