@@ -84,12 +84,6 @@ You can add and run tests in the `tests/` directory. Example framework: `pytest`
 
 ---
 
-## 📜 License
-
-MIT License
-
----
-
 ## 🤝 Contributing
 
 Pull requests are welcome! For major changes, please open an issue first to discuss what you would like to change.
